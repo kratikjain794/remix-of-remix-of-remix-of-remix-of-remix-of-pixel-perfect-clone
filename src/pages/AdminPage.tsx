@@ -123,7 +123,7 @@ export default function AdminPage() {
           <span className="w-2 h-2 rounded-full bg-alert-green animate-pulse-live" />
           <span className="text-alert-green font-semibold">{selectedRegion.toUpperCase()} ADMIN — LIVE DATA</span>
         </p>
-        <span className="text-xs text-muted-foreground font-mono-code">Auto-refreshing every 5s</span>
+        
       </div>
 
       <div className="flex items-center gap-1">
