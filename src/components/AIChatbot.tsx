@@ -202,7 +202,7 @@ export default function AIChatbot() {
       )}
 
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[380px] max-h-[550px] bg-card border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-50 w-full sm:w-[380px] max-h-[100dvh] sm:max-h-[550px] bg-card border border-border sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-secondary/50">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-alert-green animate-pulse" />

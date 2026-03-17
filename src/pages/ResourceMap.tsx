@@ -33,9 +33,9 @@ export default function ResourceMap() {
   const alerts = getAlertCounts(selectedRegion === 'All Regions' ? hospitals : hospitals.filter(h => h.city === selectedRegion));
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
       {/* Region tabs */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         {regions.map(r => (
           <button key={r} onClick={() => setSelectedRegion(r)} className={selectedRegion === r ? 'nav-tab-active' : 'nav-tab'}>
             {r === selectedRegion && r !== 'All Regions' && <span className="inline-block w-2 h-2 rounded-full bg-alert-green mr-1.5 animate-pulse-live" />}
@@ -47,8 +47,8 @@ export default function ResourceMap() {
       <StatsRow summary={summary} />
 
       {/* Alert legend */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4 text-sm">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+        <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm flex-wrap">
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-alert-red" /> {alerts.red} Red</span>
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-alert-orange" /> {alerts.orange} Orange</span>
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-alert-yellow" /> {alerts.yellow} Yellow</span>
@@ -70,7 +70,7 @@ export default function ResourceMap() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <select value={alertFilter} onChange={e => setAlertFilter(e.target.value)} className="bg-card border border-border rounded-md px-3 py-1.5 text-sm text-foreground">
           <option>All Alert Levels</option>
           <option>Red</option>

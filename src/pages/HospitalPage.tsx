@@ -106,7 +106,7 @@ function PatientTransferTab() {
         <h4 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
           <ArrowRightLeft className="w-4 h-4 text-primary" /> Patient Transfer Workflow
         </h4>
-        <div className="flex items-center justify-between gap-2 overflow-x-auto">
+        <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2">
           {[
             { step: '1', label: 'Patient in Hospital', icon: '🏥' },
             { step: '2', label: 'Search Resources', icon: '🔍' },
@@ -448,26 +448,26 @@ function PatientsTab() {
     <div className="space-y-6">
       {/* Admitted Patients */}
       <div>
-        <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-2">
             <span>👥</span>
             <h3 className="font-semibold">Admitted Patients</h3>
             <span className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded">{filtered.length}</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
             <select value={wardFilter} onChange={e => setWardFilter(e.target.value)} className="bg-card border border-border rounded-md px-3 py-1.5 text-sm text-foreground">
               <option>All Wards</option><option>ICU</option><option>ER</option><option>General</option><option>Oxygen</option>
             </select>
-            <div className="relative">
+            <div className="relative flex-1 sm:flex-initial">
               <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-              <input placeholder="Search patients..." value={search} onChange={e => setSearch(e.target.value)} className="bg-card border border-border rounded-md pl-8 pr-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+              <input placeholder="Search patients..." value={search} onChange={e => setSearch(e.target.value)} className="w-full bg-card border border-border rounded-md pl-8 pr-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
             </div>
           </div>
         </div>
         {filtered.length === 0 ? (
           <p className="text-center text-muted-foreground py-8 text-sm">No patients admitted yet.</p>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto"><table className="w-full text-sm">
             <thead>
               <tr className="text-left text-muted-foreground border-b border-border">
                 <th className="pb-2 font-medium">Patient</th>
@@ -490,7 +490,7 @@ function PatientsTab() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
 
@@ -566,7 +566,7 @@ export default function HospitalPage() {
   const loggedInHospital = hospitals.find(h => h.id === loggedInHospitalId);
 
   return (
-    <div className="p-6 space-y-5">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-5">
       <div>
         <h2 className="text-2xl font-bold">Hospital Dashboard</h2>
         <p className="text-sm font-mono-code text-muted-foreground">
@@ -574,9 +574,9 @@ export default function HospitalPage() {
         </p>
       </div>
 
-      <div className="flex items-center gap-1 flex-wrap">
+      <div className="flex items-center gap-1 flex-wrap overflow-x-auto pb-1">
         {tabs.map(t => (
-          <button key={t} onClick={() => setActiveTab(t)} className={activeTab === t ? 'nav-tab-active' : 'nav-tab'}>
+          <button key={t} onClick={() => setActiveTab(t)} className={`whitespace-nowrap ${activeTab === t ? 'nav-tab-active' : 'nav-tab'} text-xs sm:text-sm`}>
             {t === 'Health Care Resource Platform' && '🔲 '}
             {t === 'Update Resources' && '🛏 '}
             {t === 'Patient Transfer' && '🔄 '}
@@ -584,7 +584,8 @@ export default function HospitalPage() {
             {t === 'Requests' && '📋 '}
             {t === 'Emergencies' && '⚠ '}
             {t === 'Patients' && '👥 '}
-            {t}
+            <span className="hidden sm:inline">{t}</span>
+            <span className="sm:hidden">{t === 'Health Care Resource Platform' ? 'Overview' : t === 'Update Resources' ? 'Update' : t === 'Patient Transfer' ? 'Transfer' : t === 'Live Tracking' ? 'Track' : t}</span>
           </button>
         ))}
       </div>
