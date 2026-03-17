@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 20% 7%;
+    --foreground: 180 100% 95%;
+
+    --card: 210 18% 10%;
+    --card-foreground: 180 100% 95%;
+
+    --popover: 210 18% 10%;
+    --popover-foreground: 180 100% 95%;
+
+    --primary: 174 72% 46%;
+    --primary-foreground: 210 20% 7%;
+
+    --secondary: 210 15% 15%;
+    --secondary-foreground: 180 100% 95%;
+
+    --muted: 210 12% 14%;
+    --muted-foreground: 210 15% 55%;
+
+    --accent: 174 72% 46%;
+    --accent-foreground: 210 20% 7%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 180 30% 18%;
+    --input: 210 15% 18%;
+    --ring: 174 72% 46%;
+
+    --radius: 0.5rem;
+
+    /* Custom healthcare colors */
+    --alert-red: 0 72% 51%;
+    --alert-orange: 30 95% 55%;
+    --alert-yellow: 48 96% 53%;
+    --alert-green: 142 70% 45%;
+    --alert-normal: 174 72% 46%;
+
+    --cyan: 174 72% 46%;
+    --cyan-glow: 174 80% 55%;
+
+    --sidebar-background: 210 18% 10%;
+    --sidebar-foreground: 180 100% 95%;
+    --sidebar-primary: 174 72% 46%;
+    --sidebar-primary-foreground: 210 20% 7%;
+    --sidebar-accent: 210 15% 15%;
+    --sidebar-accent-foreground: 180 100% 95%;
+    --sidebar-border: 180 30% 18%;
+    --sidebar-ring: 174 72% 46%;
+  }
+
+  .light {
+    --background: 0 0% 97%;
+    --foreground: 210 20% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 20% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 20% 12%;
+
+    --primary: 174 72% 38%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 15% 92%;
+    --secondary-foreground: 210 20% 12%;
+
+    --muted: 210 12% 93%;
+    --muted-foreground: 210 10% 45%;
+
+    --accent: 174 72% 38%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 15% 85%;
+    --input: 210 15% 88%;
+    --ring: 174 72% 38%;
+
+    --alert-red: 0 72% 51%;
+    --alert-orange: 30 95% 50%;
+    --alert-yellow: 48 96% 45%;
+    --alert-green: 142 70% 38%;
+    --alert-normal: 174 72% 38%;
+
+    --cyan: 174 72% 38%;
+    --cyan-glow: 174 80% 48%;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 210 20% 12%;
+    --sidebar-primary: 174 72% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 15% 92%;
+    --sidebar-accent-foreground: 210 20% 12%;
+    --sidebar-border: 210 15% 85%;
+    --sidebar-ring: 174 72% 38%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .font-mono-code {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .text-cyan {
+    color: hsl(var(--cyan));
+  }
+
+  .text-cyan-glow {
+    color: hsl(var(--cyan-glow));
+  }
+
+  .bg-cyan {
+    background-color: hsl(var(--cyan));
+  }
+
+  .text-alert-red {
+    color: hsl(var(--alert-red));
+  }
+
+  .text-alert-orange {
+    color: hsl(var(--alert-orange));
+  }
+
+  .text-alert-yellow {
+    color: hsl(var(--alert-yellow));
+  }
+
+  .text-alert-green {
+    color: hsl(var(--alert-green));
+  }
+
+  .bg-alert-red {
+    background-color: hsl(var(--alert-red));
+  }
+
+  .bg-alert-orange {
+    background-color: hsl(var(--alert-orange));
+  }
+
+  .bg-alert-yellow {
+    background-color: hsl(var(--alert-yellow));
+  }
+
+  .bg-alert-green {
+    background-color: hsl(var(--alert-green));
+  }
+
+  .bg-alert-normal {
+    background-color: hsl(var(--alert-normal));
+  }
+
+  .badge-red {
+    @apply px-3 py-0.5 rounded text-xs font-semibold;
+    background-color: hsl(var(--alert-red) / 0.2);
+    color: hsl(var(--alert-red));
+    border: 1px solid hsl(var(--alert-red) / 0.4);
+  }
+
+  .badge-orange {
+    @apply px-3 py-0.5 rounded text-xs font-semibold;
+    background-color: hsl(var(--alert-orange) / 0.2);
+    color: hsl(var(--alert-orange));
+    border: 1px solid hsl(var(--alert-orange) / 0.4);
+  }
+
+  .badge-yellow {
+    @apply px-3 py-0.5 rounded text-xs font-semibold;
+    background-color: hsl(var(--alert-yellow) / 0.2);
+    color: hsl(var(--alert-yellow));
+    border: 1px solid hsl(var(--alert-yellow) / 0.4);
+  }
+
+  .badge-normal {
+    @apply px-3 py-0.5 rounded text-xs font-semibold;
+    background-color: hsl(var(--alert-green) / 0.2);
+    color: hsl(var(--alert-green));
+    border: 1px solid hsl(var(--alert-green) / 0.4);
+  }
+
+  .stat-card {
+    @apply border border-border rounded-lg p-4 bg-card;
+  }
+
+  .hospital-card {
+    @apply border border-border rounded-lg p-5 bg-card hover:border-primary/30 transition-colors;
+  }
+
+  .nav-tab-active {
+    @apply px-4 py-2 rounded-md text-sm font-medium bg-primary/15 text-primary border border-primary/30;
+  }
+
+  .nav-tab {
+    @apply px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground transition-colors;
+  }
+
+  .progress-bar {
+    @apply h-1.5 rounded-full;
+  }
+
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
