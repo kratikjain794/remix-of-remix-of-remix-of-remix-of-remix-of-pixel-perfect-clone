@@ -467,7 +467,7 @@ function PatientsTab() {
         {filtered.length === 0 ? (
           <p className="text-center text-muted-foreground py-8 text-sm">No patients admitted yet.</p>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto"><table className="w-full text-sm">
             <thead>
               <tr className="text-left text-muted-foreground border-b border-border">
                 <th className="pb-2 font-medium">Patient</th>
