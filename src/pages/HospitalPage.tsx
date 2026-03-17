@@ -415,11 +415,19 @@ function LiveTrackingTab() {
 }
 
 function PatientsTab() {
-  const { hospitalPatients, loggedInHospitalId } = useApp();
+  const { hospitalPatients, loggedInHospitalId, requests, emergencyRequests, hospitals } = useApp();
   const [wardFilter, setWardFilter] = useState('All Wards');
   const [search, setSearch] = useState('');
 
   const currentPatients = loggedInHospitalId ? (hospitalPatients[loggedInHospitalId] || []) : [];
+
+  const hospitalRequests = loggedInHospitalId
+    ? requests.filter(r => r.hospitalId === loggedInHospitalId)
+    : [];
+
+  const hospitalEmergencies = loggedInHospitalId
+    ? emergencyRequests.filter(r => r.targetHospitalId === loggedInHospitalId)
+    : [];
 
   const filtered = currentPatients.filter(p => {
     if (wardFilter !== 'All Wards' && p.ward !== wardFilter) return false;
@@ -437,51 +445,112 @@ function PatientsTab() {
   const wardClass = () => 'text-xs px-2 py-0.5 rounded bg-secondary text-primary font-mono-code';
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <span>👥</span>
-          <h3 className="font-semibold">Admitted Patients</h3>
-          <span className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded">{filtered.length}</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <select value={wardFilter} onChange={e => setWardFilter(e.target.value)} className="bg-card border border-border rounded-md px-3 py-1.5 text-sm text-foreground">
-            <option>All Wards</option><option>ICU</option><option>ER</option><option>General</option><option>Oxygen</option>
-          </select>
-          <div className="relative">
-            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-            <input placeholder="Search patients..." value={search} onChange={e => setSearch(e.target.value)} className="bg-card border border-border rounded-md pl-8 pr-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+    <div className="space-y-6">
+      {/* Admitted Patients */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <span>👥</span>
+            <h3 className="font-semibold">Admitted Patients</h3>
+            <span className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded">{filtered.length}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <select value={wardFilter} onChange={e => setWardFilter(e.target.value)} className="bg-card border border-border rounded-md px-3 py-1.5 text-sm text-foreground">
+              <option>All Wards</option><option>ICU</option><option>ER</option><option>General</option><option>Oxygen</option>
+            </select>
+            <div className="relative">
+              <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+              <input placeholder="Search patients..." value={search} onChange={e => setSearch(e.target.value)} className="bg-card border border-border rounded-md pl-8 pr-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+            </div>
           </div>
         </div>
-      </div>
-      {filtered.length === 0 ? (
-        <p className="text-center text-muted-foreground py-12 text-sm">No patients admitted yet. Patients will appear here when added or transferred.</p>
-      ) : (
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-muted-foreground border-b border-border">
-              <th className="pb-2 font-medium">Patient</th>
-              <th className="pb-2 font-medium">Age/Gender</th>
-              <th className="pb-2 font-medium">Ward</th>
-              <th className="pb-2 font-medium">Condition</th>
-              <th className="pb-2 font-medium">Doctor</th>
-              <th className="pb-2 font-medium text-right">Admitted</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map(p => (
-              <tr key={p.id} className="border-b border-border/50 hover:bg-secondary/30">
-                <td className="py-3 font-medium text-foreground">{p.name}</td>
-                <td className="py-3 text-muted-foreground">{p.age}{p.gender}</td>
-                <td className="py-3"><span className={wardClass()}>{p.ward}</span></td>
-                <td className="py-3"><span className={conditionClass(p.condition)}>{p.condition}</span></td>
-                <td className="py-3 text-muted-foreground">{p.doctor}</td>
-                <td className="py-3 text-right text-muted-foreground font-mono-code">{p.admittedAgo}</td>
+        {filtered.length === 0 ? (
+          <p className="text-center text-muted-foreground py-8 text-sm">No patients admitted yet.</p>
+        ) : (
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-muted-foreground border-b border-border">
+                <th className="pb-2 font-medium">Patient</th>
+                <th className="pb-2 font-medium">Age/Gender</th>
+                <th className="pb-2 font-medium">Ward</th>
+                <th className="pb-2 font-medium">Condition</th>
+                <th className="pb-2 font-medium">Doctor</th>
+                <th className="pb-2 font-medium text-right">Admitted</th>
               </tr>
+            </thead>
+            <tbody>
+              {filtered.map(p => (
+                <tr key={p.id} className="border-b border-border/50 hover:bg-secondary/30">
+                  <td className="py-3 font-medium text-foreground">{p.name}</td>
+                  <td className="py-3 text-muted-foreground">{p.age}{p.gender}</td>
+                  <td className="py-3"><span className={wardClass()}>{p.ward}</span></td>
+                  <td className="py-3"><span className={conditionClass(p.condition)}>{p.condition}</span></td>
+                  <td className="py-3 text-muted-foreground">{p.doctor}</td>
+                  <td className="py-3 text-right text-muted-foreground font-mono-code">{p.admittedAgo}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* Appointment Requests */}
+      <div className="bg-card border border-border rounded-xl p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-primary">📋</span>
+          <h3 className="font-semibold text-foreground">Appointment Requests</h3>
+          <span className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded">{hospitalRequests.length} total</span>
+        </div>
+        {hospitalRequests.length === 0 ? (
+          <p className="text-center text-muted-foreground py-6 text-sm">No appointment requests yet.</p>
+        ) : (
+          <div className="space-y-3">
+            {hospitalRequests.map(req => (
+              <div key={req.id} className="border border-border rounded-lg p-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-medium text-foreground text-sm">{req.patientName}</span>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono-code ${
+                    req.status === 'pending' ? 'bg-alert-yellow/20 text-alert-yellow' :
+                    req.status === 'approved' ? 'bg-alert-green/20 text-alert-green' :
+                    'bg-alert-red/20 text-alert-red'
+                  }`}>{req.status.toUpperCase()}</span>
+                </div>
+                <p className="text-xs text-muted-foreground">{req.resourceType} · {req.reason}</p>
+                {req.phone && <p className="text-xs text-muted-foreground">📞 {req.phone}</p>}
+                <p className="text-[10px] text-muted-foreground font-mono-code mt-1">{req.timestamp}</p>
+              </div>
             ))}
-          </tbody>
-        </table>
-      )}
+          </div>
+        )}
+      </div>
+
+      {/* Emergency Requests */}
+      <div className="bg-card border border-border rounded-xl p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-alert-red">🚨</span>
+          <h3 className="font-semibold text-foreground">Emergency Requests</h3>
+          <span className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded">{hospitalEmergencies.length} total</span>
+        </div>
+        {hospitalEmergencies.length === 0 ? (
+          <p className="text-center text-muted-foreground py-6 text-sm">No emergency requests yet.</p>
+        ) : (
+          <div className="space-y-3">
+            {hospitalEmergencies.map(req => (
+              <div key={req.id} className="border border-border rounded-lg p-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-medium text-foreground text-sm">{req.patientName}</span>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono-code ${
+                    req.status === 'active' ? 'bg-alert-red/20 text-alert-red' : 'bg-alert-green/20 text-alert-green'
+                  }`}>{req.status.toUpperCase()}</span>
+                </div>
+                <p className="text-xs text-muted-foreground">📍 {req.location}</p>
+                {req.mobile && <p className="text-xs text-muted-foreground">📞 {req.mobile}</p>}
+                <p className="text-[10px] text-muted-foreground font-mono-code mt-1">{req.timestamp}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
