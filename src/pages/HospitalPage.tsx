@@ -106,7 +106,7 @@ function PatientTransferTab() {
         <h4 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
           <ArrowRightLeft className="w-4 h-4 text-primary" /> Patient Transfer Workflow
         </h4>
-        <div className="flex items-center justify-between gap-2 overflow-x-auto">
+        <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2">
           {[
             { step: '1', label: 'Patient in Hospital', icon: '🏥' },
             { step: '2', label: 'Search Resources', icon: '🔍' },
