@@ -39,8 +39,11 @@ export interface Patient {
 
 export interface EmergencyRequest {
   id: string;
+  patientName: string;
+  mobile: string;
+  location: string;
+  targetHospitalId: string;
   hospitalName: string;
-  type: string;
   status: 'active' | 'resolved';
   timestamp: string;
 }
@@ -73,7 +76,7 @@ export interface ActiveAmbulance {
   fromHospitalId: string;
   toHospitalId: string;
   patientName: string;
-  progress: number; // 0-100
+  progress: number;
   startTime: number;
 }
 

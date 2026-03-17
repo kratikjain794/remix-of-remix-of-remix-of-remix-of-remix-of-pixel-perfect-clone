@@ -311,14 +311,52 @@ function RequestsTab() {
 }
 
 function EmergenciesTab() {
+  const { emergencyRequests, loggedInHospitalId, updateEmergencyStatus } = useApp();
+  
+  const hospitalEmergencies = loggedInHospitalId
+    ? emergencyRequests.filter(r => r.targetHospitalId === loggedInHospitalId)
+    : [];
+
   return (
     <div>
       <div className="flex items-center gap-2 mb-4">
         <span className="text-alert-red">🔺</span>
         <h3 className="font-semibold">Emergency Requests</h3>
-        <span className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded">0 active</span>
+        <span className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded">
+          {hospitalEmergencies.filter(r => r.status === 'active').length} active
+        </span>
       </div>
-      <p className="text-center text-muted-foreground py-16">No emergency requests yet</p>
+      {hospitalEmergencies.length === 0 ? (
+        <p className="text-center text-muted-foreground py-16">No emergency requests yet. Emergency SOS requests from users will appear here.</p>
+      ) : (
+        <div className="space-y-3">
+          {hospitalEmergencies.map(req => (
+            <div key={req.id} className="bg-card border border-border rounded-lg p-4 flex items-start justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-medium text-foreground text-sm">{req.patientName}</span>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono-code ${
+                    req.status === 'active' ? 'bg-alert-red/20 text-alert-red animate-pulse' : 'bg-alert-green/20 text-alert-green'
+                  }`}>
+                    {req.status.toUpperCase()}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground">📍 {req.location}</p>
+                {req.mobile && <p className="text-xs text-muted-foreground">📞 {req.mobile}</p>}
+                <p className="text-[10px] text-muted-foreground font-mono-code mt-1">{req.timestamp}</p>
+              </div>
+              {req.status === 'active' && (
+                <button
+                  onClick={() => updateEmergencyStatus(req.id, 'resolved')}
+                  className="text-xs px-3 py-1.5 rounded-md bg-alert-green/10 text-alert-green hover:bg-alert-green/20 transition-colors font-medium shrink-0"
+                >
+                  ✓ Resolve
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
