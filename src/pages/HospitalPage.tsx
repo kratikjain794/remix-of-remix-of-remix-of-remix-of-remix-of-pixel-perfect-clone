@@ -566,7 +566,7 @@ export default function HospitalPage() {
   const loggedInHospital = hospitals.find(h => h.id === loggedInHospitalId);
 
   return (
-    <div className="p-6 space-y-5">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-5">
       <div>
         <h2 className="text-2xl font-bold">Hospital Dashboard</h2>
         <p className="text-sm font-mono-code text-muted-foreground">
