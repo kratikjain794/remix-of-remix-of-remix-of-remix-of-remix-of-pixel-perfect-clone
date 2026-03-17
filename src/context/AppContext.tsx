@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
-import { Hospital, Patient, AppointmentRequest, HospitalSignupData, TransferRequest, ActiveAmbulance } from '@/types/hospital';
+import { Hospital, Patient, AppointmentRequest, HospitalSignupData, TransferRequest, ActiveAmbulance, EmergencyRequest } from '@/types/hospital';
 import { allHospitals, defaultPatients } from '@/data/hospitals';
 
 interface AppState {
@@ -24,12 +24,13 @@ interface AppState {
   hospitalPatients: Record<string, Patient[]>;
   addPatientToHospital: (hospitalId: string, patient: Patient) => void;
   activeAmbulances: ActiveAmbulance[];
+  emergencyRequests: EmergencyRequest[];
+  addEmergencyRequest: (req: Omit<EmergencyRequest, 'id' | 'status' | 'timestamp'>) => void;
+  updateEmergencyStatus: (id: string, status: 'active' | 'resolved') => void;
+  getSignedUpHospitals: () => Hospital[];
 }
 
 const AppContext = createContext<AppState | undefined>(undefined);
-
-// Default hospital id for demo patients
-const DEFAULT_HOSPITAL_ID = 'ind-1';
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [hospitals, setHospitals] = useState<Hospital[]>(allHospitals);
@@ -41,11 +42,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [transferRequests, setTransferRequests] = useState<TransferRequest[]>([]);
   const [registeredUsers, setRegisteredUsers] = useState<{ email: string; password: string; hospitalId: string }[]>([]);
   const [activeAmbulances, setActiveAmbulances] = useState<ActiveAmbulance[]>([]);
+  const [emergencyRequests, setEmergencyRequests] = useState<EmergencyRequest[]>([]);
   
-  // Per-hospital patient lists. Demo hospital gets default patients, others start empty.
   const [hospitalPatients, setHospitalPatients] = useState<Record<string, Patient[]>>(() => {
     const initial: Record<string, Patient[]> = {};
-    // Assign default patients to first hospital
     allHospitals.forEach(h => {
       initial[h.id] = h.id === '1' ? [...defaultPatients] : [];
     });
@@ -54,7 +54,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const ambulanceTimers = useRef<Record<string, ReturnType<typeof setInterval>>>({});
 
-  // Cleanup timers on unmount
   useEffect(() => {
     return () => {
       Object.values(ambulanceTimers.current).forEach(clearInterval);
@@ -78,6 +77,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       return { ...prev, [hospitalId]: newList };
     });
   }, []);
+
+  const getSignedUpHospitals = useCallback(() => {
+    return hospitals.filter(h => h.id.startsWith('custom-'));
+  }, [hospitals]);
 
   const login = useCallback((email: string, password: string) => {
     if (email === 'hospital@lifeline.in' && password === 'hospital123') {
@@ -198,7 +201,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
     setTransferRequests(prev => [newReq, ...prev]);
     
-    // Also add patient to source hospital's patient list if not already there
     const existingPatients = hospitalPatients[req.fromHospitalId] || [];
     const alreadyExists = existingPatients.some(p => p.name === req.patientName);
     if (!alreadyExists) {
@@ -229,7 +231,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
     setActiveAmbulances(prev => [...prev, newAmbulance]);
 
-    // Simulate ambulance moving over ~2.5 minutes (2% every 3s)
     const timer = setInterval(() => {
       setActiveAmbulances(prev => {
         const updated = prev.map(a => {
@@ -243,7 +244,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           clearInterval(timer);
           delete ambulanceTimers.current[ambulanceId];
           
-          // Transfer patient: remove from source, add to destination
           removePatientFromHospital(transfer.fromHospitalId, transfer.patientName);
           const transferredPatient: Patient = {
             id: `pat-transferred-${Date.now()}`,
@@ -257,7 +257,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           };
           addPatientToHospital(transfer.toHospitalId, transferredPatient);
           
-          // Remove ambulance after a short delay
           setTimeout(() => {
             setActiveAmbulances(p => p.filter(a => a.id !== ambulanceId));
           }, 5000);
@@ -281,6 +280,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [transferRequests, startAmbulanceTracking]);
 
+  const addEmergencyRequest = useCallback((req: Omit<EmergencyRequest, 'id' | 'status' | 'timestamp'>) => {
+    const newReq: EmergencyRequest = {
+      ...req,
+      id: `emer-${Date.now()}`,
+      status: 'active',
+      timestamp: new Date().toLocaleString(),
+    };
+    setEmergencyRequests(prev => [newReq, ...prev]);
+  }, []);
+
+  const updateEmergencyStatus = useCallback((id: string, status: 'active' | 'resolved') => {
+    setEmergencyRequests(prev => prev.map(r => r.id === id ? { ...r, status } : r));
+  }, []);
+
   return (
     <AppContext.Provider value={{
       hospitals, selectedRegion, setSelectedRegion, isLoggedIn, isAdmin, loggedInHospitalId,
@@ -288,6 +301,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       requests, addRequest, updateRequestStatus,
       transferRequests, addTransferRequest, updateTransferStatus,
       hospitalPatients, addPatientToHospital, activeAmbulances,
+      emergencyRequests, addEmergencyRequest, updateEmergencyStatus,
+      getSignedUpHospitals,
     }}>
       {children}
     </AppContext.Provider>
