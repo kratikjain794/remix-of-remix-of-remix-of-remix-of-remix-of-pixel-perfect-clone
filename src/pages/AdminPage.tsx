@@ -117,7 +117,7 @@ export default function AdminPage() {
   const activeEmergencies = emergencyRequests.filter(r => r.status === 'active').length;
 
   return (
-    <div className="p-6 space-y-5">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-5">
       <div className="flex items-center justify-between">
         <p className="text-sm font-mono-code flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-alert-green animate-pulse-live" />
