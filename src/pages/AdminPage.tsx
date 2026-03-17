@@ -3,11 +3,11 @@ import { useApp } from '@/context/AppContext';
 import { getRegionSummary, getAlertCounts } from '@/data/hospitals';
 import StatsRow from '@/components/StatsRow';
 import HospitalCard from '@/components/HospitalCard';
-import { Search } from 'lucide-react';
+import { Search, Check } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend,
-  LineChart, Line, AreaChart, Area,
+  AreaChart, Area,
 } from 'recharts';
 
 const CHART_COLORS = [
@@ -67,7 +67,7 @@ function AdminLogin({ onLogin }: { onLogin: (e: string, p: string) => boolean })
 }
 
 export default function AdminPage() {
-  const { isAdmin, adminLogin, hospitals, selectedRegion } = useApp();
+  const { isAdmin, adminLogin, hospitals, selectedRegion, emergencyRequests, updateEmergencyStatus } = useApp();
   const [activeTab, setActiveTab] = useState<typeof adminTabs[number]>('Emergencies');
   const [search, setSearch] = useState('');
 
@@ -101,7 +101,6 @@ export default function AdminPage() {
     return ALERT_COLORS.Normal;
   });
 
-  // Frequency / utilization data per hospital
   const freqData = regionHospitals.map(h => ({
     name: h.name.split(' ').slice(0, 2).join(' '),
     icuUtil: Math.round((h.resources.icuBeds.used / h.resources.icuBeds.total) * 100),
@@ -114,6 +113,8 @@ export default function AdminPage() {
   const tooltipStyle = { backgroundColor: 'hsl(210 18% 10%)', border: '1px solid hsl(180 30% 18%)', borderRadius: '8px', color: 'hsl(180 100% 95%)' };
   const axisTickStyle = { fill: 'hsl(210 15% 55%)', fontSize: 12 };
   const gridStroke = 'hsl(180 30% 18%)';
+
+  const activeEmergencies = emergencyRequests.filter(r => r.status === 'active').length;
 
   return (
     <div className="p-6 space-y-5">
@@ -128,7 +129,11 @@ export default function AdminPage() {
       <div className="flex items-center gap-1">
         {adminTabs.map(t => (
           <button key={t} onClick={() => setActiveTab(t)} className={activeTab === t ? 'nav-tab-active' : 'nav-tab'}>
-            {t === 'Emergencies' && '⚠'} {t === 'Hospitals' && '🏥'} {t === 'Analytics' && '📊'} {t}{t === 'Emergencies' ? '0' : ''}
+            {t === 'Emergencies' && '⚠ '}{t === 'Hospitals' && '🏥 '}{t === 'Analytics' && '📊 '}
+            {t}
+            {t === 'Emergencies' && activeEmergencies > 0 && (
+              <span className="ml-1 text-[10px] bg-alert-red/20 text-alert-red px-1.5 py-0.5 rounded-full">{activeEmergencies}</span>
+            )}
           </button>
         ))}
       </div>
@@ -140,9 +145,40 @@ export default function AdminPage() {
           <div className="flex items-center gap-2 mb-4">
             <span className="text-alert-red">🔺</span>
             <h3 className="font-semibold">All Emergency Requests — {selectedRegion}</h3>
-            <span className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded">0 total</span>
+            <span className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded">{emergencyRequests.length} total</span>
           </div>
-          <p className="text-center text-muted-foreground py-16">No emergency requests yet.</p>
+          {emergencyRequests.length === 0 ? (
+            <p className="text-center text-muted-foreground py-16">No emergency requests yet. User SOS requests will appear here.</p>
+          ) : (
+            <div className="space-y-3">
+              {emergencyRequests.map(req => (
+                <div key={req.id} className="bg-card border border-border rounded-lg p-4 flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-medium text-foreground text-sm">{req.patientName}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono-code ${
+                        req.status === 'active' ? 'bg-alert-red/20 text-alert-red animate-pulse' : 'bg-alert-green/20 text-alert-green'
+                      }`}>
+                        {req.status.toUpperCase()}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">🏥 Dispatched to: {req.hospitalName}</p>
+                    <p className="text-xs text-muted-foreground">📍 {req.location}</p>
+                    {req.mobile && <p className="text-xs text-muted-foreground">📞 {req.mobile}</p>}
+                    <p className="text-[10px] text-muted-foreground font-mono-code mt-1">{req.timestamp}</p>
+                  </div>
+                  {req.status === 'active' && (
+                    <button
+                      onClick={() => updateEmergencyStatus(req.id, 'resolved')}
+                      className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md bg-alert-green/10 text-alert-green hover:bg-alert-green/20 transition-colors font-medium shrink-0"
+                    >
+                      <Check className="w-3 h-3" /> Resolve
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -153,7 +189,7 @@ export default function AdminPage() {
             <input placeholder={`Search ${selectedRegion} hospitals...`} value={search} onChange={e => setSearch(e.target.value)} className="w-full bg-card border border-border rounded-lg pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredHospitals.map(h => <HospitalCard key={h.id} hospital={h} />)}
+            {filteredHospitals.map(h => <HospitalCard key={h.id} hospital={h} hideRequest />)}
           </div>
         </div>
       )}
@@ -162,7 +198,6 @@ export default function AdminPage() {
         <div className="space-y-6">
           <h3 className="font-semibold flex items-center gap-2">📊 Network Analytics — {selectedRegion}</h3>
 
-          {/* Bar Chart */}
           <div className="bg-card border border-border rounded-xl p-6">
             <p className="text-xs font-mono-code text-muted-foreground uppercase tracking-wider mb-4">AVAILABLE RESOURCES — BAR CHART</p>
             <ResponsiveContainer width="100%" height={300}>
@@ -179,7 +214,6 @@ export default function AdminPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Pie Chart */}
             <div className="bg-card border border-border rounded-xl p-6">
               <p className="text-xs font-mono-code text-muted-foreground uppercase tracking-wider mb-4">HOSPITAL ALERT DISTRIBUTION — PIE CHART</p>
               <ResponsiveContainer width="100%" height={300}>
@@ -193,7 +227,6 @@ export default function AdminPage() {
               </ResponsiveContainer>
             </div>
 
-            {/* Frequency / Utilization Line Chart */}
             <div className="bg-card border border-border rounded-xl p-6">
               <p className="text-xs font-mono-code text-muted-foreground uppercase tracking-wider mb-4">RESOURCE UTILIZATION % — FREQUENCY GRAPH</p>
               <ResponsiveContainer width="100%" height={300}>

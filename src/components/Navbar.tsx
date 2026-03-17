@@ -34,6 +34,9 @@ export default function Navbar() {
           <Link to="/" className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-sm transition-colors ${isActive('/') ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}>
             <Activity className="w-4 h-4" /> Resource Map
           </Link>
+          <Link to="/user" className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-sm transition-colors ${isActive('/user') ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+            👤 User
+          </Link>
           <Link to="/hospital" className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-sm transition-colors ${isActive('/hospital') || isActive('/hospital/dashboard') ? 'text-primary border-b-2 border-primary bg-primary/5' : 'text-muted-foreground hover:text-foreground'}`}>
             🏥 Hospital
           </Link>

@@ -9,6 +9,7 @@ import Navbar from "@/components/Navbar";
 import ResourceMap from "@/pages/ResourceMap";
 import HospitalPage from "@/pages/HospitalPage";
 import AdminPage from "@/pages/AdminPage";
+import UserPage from "@/pages/UserPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => {
                 <Navbar />
                 <Routes>
                   <Route path="/" element={<ResourceMap />} />
+                  <Route path="/user" element={<UserPage />} />
                   <Route path="/hospital" element={<HospitalPage />} />
                   <Route path="/hospital/dashboard" element={<HospitalPage />} />
                   <Route path="/admin" element={<AdminPage />} />
