@@ -25,7 +25,7 @@ export default function Navbar() {
             <Activity className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-sm font-bold text-primary tracking-wide">HEALTHCARE RESOURCE PLATFORM</h1>
+            <h1 className="text-sm font-bold text-primary tracking-wide">CARE-CONNECT</h1>
             <p className="text-[10px] font-mono-code text-muted-foreground">{selectedRegion.toUpperCase()} · {time.toLocaleTimeString('en-IN', { hour12: false })}</p>
           </div>
         </Link>
