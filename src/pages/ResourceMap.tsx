@@ -47,8 +47,8 @@ export default function ResourceMap() {
       <StatsRow summary={summary} />
 
       {/* Alert legend */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4 text-sm">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+        <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm flex-wrap">
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-alert-red" /> {alerts.red} Red</span>
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-alert-orange" /> {alerts.orange} Orange</span>
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-alert-yellow" /> {alerts.yellow} Yellow</span>
