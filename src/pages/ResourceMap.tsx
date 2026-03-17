@@ -70,7 +70,7 @@ export default function ResourceMap() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <select value={alertFilter} onChange={e => setAlertFilter(e.target.value)} className="bg-card border border-border rounded-md px-3 py-1.5 text-sm text-foreground">
           <option>All Alert Levels</option>
           <option>Red</option>
