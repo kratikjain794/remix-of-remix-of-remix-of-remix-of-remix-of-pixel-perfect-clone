@@ -448,19 +448,19 @@ function PatientsTab() {
     <div className="space-y-6">
       {/* Admitted Patients */}
       <div>
-        <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-2">
             <span>👥</span>
             <h3 className="font-semibold">Admitted Patients</h3>
             <span className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded">{filtered.length}</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
             <select value={wardFilter} onChange={e => setWardFilter(e.target.value)} className="bg-card border border-border rounded-md px-3 py-1.5 text-sm text-foreground">
               <option>All Wards</option><option>ICU</option><option>ER</option><option>General</option><option>Oxygen</option>
             </select>
-            <div className="relative">
+            <div className="relative flex-1 sm:flex-initial">
               <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-              <input placeholder="Search patients..." value={search} onChange={e => setSearch(e.target.value)} className="bg-card border border-border rounded-md pl-8 pr-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+              <input placeholder="Search patients..." value={search} onChange={e => setSearch(e.target.value)} className="w-full bg-card border border-border rounded-md pl-8 pr-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
             </div>
           </div>
         </div>
