@@ -574,9 +574,9 @@ export default function HospitalPage() {
         </p>
       </div>
 
-      <div className="flex items-center gap-1 flex-wrap">
+      <div className="flex items-center gap-1 flex-wrap overflow-x-auto pb-1">
         {tabs.map(t => (
-          <button key={t} onClick={() => setActiveTab(t)} className={activeTab === t ? 'nav-tab-active' : 'nav-tab'}>
+          <button key={t} onClick={() => setActiveTab(t)} className={`whitespace-nowrap ${activeTab === t ? 'nav-tab-active' : 'nav-tab'} text-xs sm:text-sm`}>
             {t === 'Health Care Resource Platform' && '🔲 '}
             {t === 'Update Resources' && '🛏 '}
             {t === 'Patient Transfer' && '🔄 '}
@@ -584,7 +584,8 @@ export default function HospitalPage() {
             {t === 'Requests' && '📋 '}
             {t === 'Emergencies' && '⚠ '}
             {t === 'Patients' && '👥 '}
-            {t}
+            <span className="hidden sm:inline">{t}</span>
+            <span className="sm:hidden">{t === 'Health Care Resource Platform' ? 'Overview' : t === 'Update Resources' ? 'Update' : t === 'Patient Transfer' ? 'Transfer' : t === 'Live Tracking' ? 'Track' : t}</span>
           </button>
         ))}
       </div>
